@@ -20,7 +20,7 @@ class TestProbePlan:
         """PUT /ProbePlan/NEW — успешное создание запланированной пробы."""
         payload = {
             "patientId": "00000b30-c43a-423e-9260-d8f3798adddc",
-            "vacProbeId": None,
+            "vacProbeId": None ,
             "vacProbeTypeId": "2bc01668-7408-11ef-9e27-080027edb999",
             "vacPlanStatusId": 5,
             "nazPersonId": "a6e05b5a-3b19-4703-a584-4b2a99b86443",

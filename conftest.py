@@ -1,17 +1,13 @@
 """
-conftest.py — общие фикстуры для тестов вакцинации.
+conftest.py — общие фикстуры для всех тестов.
 
-Использование переменных окружения (.env):
-    BASE_URL   — базовый URL API (по умолчанию https://emis-test.miacugra.ru/vaccination)
-    TOKEN      — Bearer-токен авторизации
-    PATIENT_ID — ID пациента, используемый в тестах редактирования
-
-Пример .env:
-    BASE_URL=https://emis-test.miacugra.ru/vaccination
-    TOKEN=Bearer eyJhbG...
-    PATIENT_ID=00000b30-c43a-423e-9260-d8f3798adddc
+Переменные окружения (.env):
+    BASE_URL      — базовый URL вакцинации (https://emis-test.miacugra.ru/vaccination)
+    DISTRICT_URL  — базовый URL паспорта участка (https://emis-test.miacugra.ru/district)
+    TOKEN         — Bearer-токен авторизации (один для всех сервисов)
+    PATIENT_ID    — ID пациента по умолчанию
+    MO_ID         — ID медицинской организации
 """
-from config import VaccinationConfig, DistrictConfig
 import os
 import pytest
 import requests
@@ -21,34 +17,39 @@ load_dotenv()
 
 
 # --------------------------------------------------------------------------- #
-#  env — словарь, хранящий состояние сессии (созданные ID и т.п.)            #
+#  env — общий словарь состояния сессии                                      #
 # --------------------------------------------------------------------------- #
 @pytest.fixture(scope="session")
 def env():
     """
     Словарь состояния сессии.
-    Начальные значения берутся из переменных окружения,
-    далее тесты могут дописывать созданные ID.
+    Начальные значения из .env, тесты дописывают созданные ID.
     """
     return {
         "base_url": os.getenv(
             "BASE_URL", "https://emis-test.miacugra.ru/vaccination"
         ),
+        "district_url": os.getenv(
+            "DISTRICT_URL", "https://emis-test.miacugra.ru/district"
+        ),
         "token": os.getenv("TOKEN", ""),
         "patient_id": os.getenv(
             "PATIENT_ID", "00000b30-c43a-423e-9260-d8f3798adddc"
+        ),
+        "mo_id": os.getenv(
+            "MO_ID", "a8fad9fc-161e-4de9-adab-5ac32ae9c460"
         ),
     }
 
 
 # --------------------------------------------------------------------------- #
-#  api_client — requests.Session с авторизацией                              #
+#  api_client — единая сессия для всех сервисов                             #
 # --------------------------------------------------------------------------- #
 @pytest.fixture(scope="session")
 def api_client(env):
     """
     Сессия requests с предустановленными заголовками авторизации.
-    Переиспользуется во всех тестах сессии.
+    Один клиент для всех сервисов — токен одинаковый.
     """
     session = requests.Session()
     session.headers.update(
