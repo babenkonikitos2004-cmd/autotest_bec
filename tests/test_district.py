@@ -456,7 +456,7 @@ _DAIRY_BASE = {
     "polisId": "fe3bfe85-d509-4459-9ba0-8995e20230c6",
     "personId": "a6e05b5a-3b19-4703-a584-4b2a99b86443",
     "districtId": "42d274de-c91d-4d7e-895f-2a1819a58388",
-    "med": "88b0eb87-d728-4513-8ddd-aecfb6f7a2a4",
+    "med": "cfd8698d-d6ff-4dee-8e11-4db51429ac09",
     "medName": None,
     "dosage": 12,
     "validity": "31f4ac36-03ba-4527-bdb4-ab0f0b831902",
