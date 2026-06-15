@@ -2,7 +2,7 @@
 Тесты: Медицинский отвод / отказ (Exemption)
 """
 import pytest
-
+from datetime import date, timedelta
 
 _EXEMPTION_BASE = {
     "vacExemptionType": {"id": 1, "name": "Противопоказание"},
@@ -27,11 +27,16 @@ _EXEMPTION_BASE = {
         },
     ],
     "person": {
-        "id": "a6e05b5a-3b19-4703-a584-4b2a99b86443",
-        "name": "Круглов Петр Сергеевич",
+        "id": "6e9a7a9f-4eb3-4dd2-b23c-7564f7077ad8",
+        "userId": "a6e05b5a-3b19-4703-a584-4b2a99b86443",
+        "name": "Круглов Петр Сергеевич"
     },
     "infectionDTO": [
-        {"id": "", "infectionId": 5, "infectionName": "Брюшной тиф"}
+        {
+      "id": "",
+      "infectionId": 5,
+      "infectionName": "Брюшной тиф"
+    }
     ],
 }
 
@@ -44,9 +49,10 @@ class TestExemption:
     # ------------------------------------------------------------------ #
     def test_create_exemption(self, api_client, env):
         """PUT /Exemption/NEW — создание медотвода в своём МО."""
+        today = date.today().isoformat()
         payload = {
             **_EXEMPTION_BASE,
-            "begDt": "2025-11-28",
+            "begDt": today,
             "externalMo": False,
             "externalPersonFio": "null",
         }
@@ -69,9 +75,10 @@ class TestExemption:
     # ------------------------------------------------------------------ #
     def test_create_exemption_external_mo(self, api_client, env):
         """PUT /Exemption/NEW — создание медотвода из другого МО."""
+        today = date.today().isoformat()
         payload = {
             **_EXEMPTION_BASE,
-            "begDt": "2025-10-28",
+            "begDt": today,
             "externalMo": True,
             "externalMoName": "АбраКадабра",
             "externalPersonFio": "Горин Андрей",
@@ -95,13 +102,14 @@ class TestExemption:
     # ------------------------------------------------------------------ #
     def test_edit_exemption(self, api_client, env):
         """POST /Exemption/{id} — редактирование медотвода."""
+        today = date.today().isoformat()
         exemption_id = env.get("created_medical_exemption_id")
         if not exemption_id:
             pytest.skip("created_medical_exemption_id не задан — пропущен тест создания")
 
         payload = {
             "vacExemptionType": {"id": 1, "name": "Противопоказание"},
-            "begDt": "2025-01-20",
+            "begDt": today,
             "endDt": None,
             "indefinitePeriod": 1,
             "vacPrepAll": 0,
@@ -110,7 +118,7 @@ class TestExemption:
             "patientId": env.get(
                 "patient_id", "b653f1e7-7f0d-4af0-b0cd-9df21f3a6718"
             ),
-            "changeDt": "2025-10-28",
+            "changeDt": today,
             "vacPrepGroup": None,
             "reason": {
                 "id": "024907e4-16cf-49cf-aade-5aeb33391637",
@@ -130,8 +138,9 @@ class TestExemption:
             "infectionId": 5,
             "motivation": None,
             "person": {
-                "id": "a6e05b5a-3b19-4703-a584-4b2a99b86443",
-                "name": "Круглов Петр Сергеевич",
+                "id": "6e9a7a9f-4eb3-4dd2-b23c-7564f7077ad8",
+        "userId": "a6e05b5a-3b19-4703-a584-4b2a99b86443",
+        "name": "Круглов Петр Сергеевич"
             },
         }
 

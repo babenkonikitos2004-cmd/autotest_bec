@@ -3,7 +3,7 @@
 Конвертировано из Postman коллекции: проверка тестов вакцина
 """
 import pytest
-
+from datetime import date, timedelta
 
 class TestVaccinePlan:
     """CRUD тесты для запланированных прививок."""
@@ -13,20 +13,19 @@ class TestVaccinePlan:
     # ------------------------------------------------------------------ #
     def test_create_vaccine_plan(self, api_client, env):
         """PUT /Vaccine/plan/NEW — создание запланированной прививки."""
+        today = date.today().isoformat()
         payload = {
             "patientId": "00000b30-c43a-423e-9260-d8f3798adddc",
-            "planDt": "2025-10-28",
-            "anamnezDt": "2025-07-20",
+            "planDt": today,
+            "anamnezDt": today,
             "indicationsUse": {
-                "id": "24a00e44-3eb0-4076-a940-481f393b3d00",
-                "name": "Иные",
+                "id":"8ebc710f-7212-4028-8532-23b7764112b4","name":"Вакцинация по эпидемическим показаниям","nsi_value_id":"8ebc710f-7212-4028-8532-23b7764112b4","nsi_beg_dt":"2024-03-06","nsi_end_dt":None
             },
             "vacDisease": {"id": "4", "name": "Дифтерия"},
-            "vacType": {"id": "2", "name": "Дополнительная иммунизация"},
-            "tour": "4",
+            "vacType": {"id": "2", "name": "Дополнительная иммунизация","name_short":"Доп"},
+            "tour": 4,
             "nazPerson": {
-                "id": "f18e2464-3864-4720-8077-0936cb668c79",
-                "name": "Лихачева Ирина Сергеевна",
+                "id":"6e9a7a9f-4eb3-4dd2-b23c-7564f7077ad8"
             },
             "vacPlanStatus": {
                 "id": 5,
@@ -55,28 +54,25 @@ class TestVaccinePlan:
         plan_id = env.get("created_vaccine_plan_id")
         if not plan_id:
             pytest.skip("created_vaccine_plan_id не задан — пропущен тест создания")
-
+        today = date.today().isoformat()
         payload = {
             "id": plan_id,
             "patientId": "00000b30-c43a-423e-9260-d8f3798adddc",
-            "planDt": "2025-08-04",
-            "anamnezDt": "2025-07-20",
-            "schema": None,
+            "planDt": today,
+            "anamnezDt": today,
             "indicationsUse": {
-                "id": "24a00e44-3eb0-4076-a940-481f393b3d00",
-                "name": "Иные",
+                "id":"8ebc710f-7212-4028-8532-23b7764112b4","name":"Вакцинация по эпидемическим показаниям","nsi_value_id":"8ebc710f-7212-4028-8532-23b7764112b4","nsi_beg_dt":"2024-03-06","nsi_end_dt":None
             },
-            "vacDisease": {"id": 6, "name": "Дифтерия"},
-            "vacType": {"id": 2, "name": "Дополнительная иммунизация"},
-            "vaccinationId": None,
-            "tour": "4",
-            "vacPlanStatus": {"id": 5, "name": "План ручн"},
-            "executeDt": None,
+            "vacDisease": {"id": "4", "name": "Дифтерия"},
+            "vacType": {"id": "2", "name": "Дополнительная иммунизация","name_short":"Доп"},
+            "tour": 6,
             "nazPerson": {
-                "id": "f18e2464-3864-4720-8077-0936cb668c79",
-                "name": "Лихачева Ирина Сергеевна",
+                "id":"6e9a7a9f-4eb3-4dd2-b23c-7564f7077ad8"
             },
-            "comment": None,
+            "vacPlanStatus": {
+                "id": 5,
+                "name": "План ручн"
+            },
         }
 
         response = api_client.post(

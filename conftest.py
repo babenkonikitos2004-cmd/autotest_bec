@@ -35,6 +35,11 @@ def _resolve_env(config) -> str:
     return os.getenv("ENV", "test").lower()
 
 
+def _norm(url: str) -> str:
+    """Убираем хвостовой слэш, чтобы пути склеивались без двойных //."""
+    return (url or "").rstrip("/")
+
+
 @pytest.fixture(scope="session")
 def env(request):
     """
@@ -45,23 +50,30 @@ def env(request):
     active_env = _resolve_env(request.config)
 
     if active_env == "dev":
-        base_url     = os.getenv("DEV_BASE_URL",     "http://vacemisdev.oblteh:8084/vaccination")
-        district_url = os.getenv("DEV_DISTRICT_URL", "http://vacemisdev.oblteh:8081/District")
-        token        = os.getenv("DEV_TOKEN",         os.getenv("TOKEN", ""))
+        base_url        = os.getenv("DEV_BASE_URL",        "http://vacemisdev.oblteh:8084")
+        district_url    = os.getenv("DEV_DISTRICT_URL",    "http://vacemisdev.oblteh:8081")
+        vac_report_url  = os.getenv("DEV_VAC_REPORT_URL",  "http://vacemisdev.oblteh:8082")  # на dev сервис отдельный; пусто → тесты vac-report скипаются
+        token           = os.getenv("DEV_TOKEN",           os.getenv("TOKEN", ""))
     else:  # test
-        base_url     = os.getenv("TEST_BASE_URL",     "https://emis-test.miacugra.ru/vaccination")
-        district_url = os.getenv("TEST_DISTRICT_URL", "https://emis-test.miacugra.ru/district")
-        token        = os.getenv("TEST_TOKEN",         os.getenv("TOKEN", ""))
+        base_url        = os.getenv("TEST_BASE_URL",       "https://emis-test.miacugra.ru/vaccination")
+        district_url    = os.getenv("TEST_DISTRICT_URL",   "https://emis-test.miacugra.ru/district")
+        vac_report_url  = os.getenv("TEST_VAC_REPORT_URL", "https://emis-test.miacugra.ru/vac-report")
+        token           = os.getenv("TEST_TOKEN",          os.getenv("TOKEN", ""))
+
+    base_url       = _norm(base_url)
+    district_url   = _norm(district_url)
+    vac_report_url = _norm(vac_report_url)
 
     print(f"\n🔧 Окружение: [{active_env.upper()}]  base_url={base_url}")
 
     return {
-        "active_env":    active_env,
-        "base_url":      base_url,
-        "district_url":  district_url,
-        "token":         token,
-        "patient_id":    os.getenv("PATIENT_ID", "00000b30-c43a-423e-9260-d8f3798adddc"),
-        "mo_id":         os.getenv("MO_ID",       "a8fad9fc-161e-4de9-adab-5ac32ae9c460"),
+        "active_env":     active_env,
+        "base_url":       base_url,
+        "district_url":   district_url,
+        "vac_report_url": vac_report_url,
+        "token":          token,
+        "patient_id":     os.getenv("PATIENT_ID", "00000b30-c43a-423e-9260-d8f3798adddc"),
+        "mo_id":          os.getenv("MO_ID",       "a8fad9fc-161e-4de9-adab-5ac32ae9c460"),
     }
 
 

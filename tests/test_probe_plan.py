@@ -4,6 +4,7 @@
 """
 import pytest
 import requests
+from datetime import date, timedelta
 
 
 class TestProbePlan:
@@ -18,13 +19,16 @@ class TestProbePlan:
     # ------------------------------------------------------------------ #
     def test_create_probe_plan(self, api_client, env):
         """PUT /ProbePlan/NEW — успешное создание запланированной пробы."""
+        today = date.today().isoformat()
+
         payload = {
             "patientId": "00000b30-c43a-423e-9260-d8f3798adddc",
             "vacProbeId": None ,
-            "vacProbeTypeId": "2bc01668-7408-11ef-9e27-080027edb999",
+            "nazPosition": {"id":"6e9a7a9f-4eb3-4dd2-b23c-7564f7077ad8"
+            },
+            "vacProbeTypeId": "2e497909-d5dc-4eef-a534-3e2e57c63154",
             "vacPlanStatusId": 5,
-            "nazPersonId": "a6e05b5a-3b19-4703-a584-4b2a99b86443",
-            "planDt": "2025-10-31",
+            "planDt": today ,
         }
 
         response = api_client.put(f"{env['base_url']}/ProbePlan/NEW", json=payload)
@@ -49,14 +53,17 @@ class TestProbePlan:
         probe_id = env.get("created_probe_id")
         if not probe_id:
             pytest.skip("created_probe_id не задан — пропущен тест создания")
+        today = date.today().isoformat()
 
         payload = {
-            "patientId": env.get("patient_id", "00000b30-c43a-423e-9260-d8f3798adddc"),
-            "vacProbeId": None,
-            "vacProbeTypeId": "2bc01668-7408-11ef-9e27-080027edb999",
+            "id"    : probe_id,
+            "patientId": "00000b30-c43a-423e-9260-d8f3798adddc",
+            "vacProbeId": None ,
+            "nazPosition": {"id":"6e9a7a9f-4eb3-4dd2-b23c-7564f7077ad8"
+            },
+            "vacProbeTypeId": "a981a7e3-cc3d-48b3-9092-0440c9165741",
             "vacPlanStatusId": 5,
-            "nazPersonId": "a6e05b5a-3b19-4703-a584-4b2a99b86443",
-            "planDt": "2025-12-31",
+            "planDt": today ,
         }
 
         response = api_client.post(
